@@ -8,22 +8,6 @@
 PHP 8.3+
 Laravel 11+
 
-## DB
-
-DBは[tos](https://github.com/feliseed/tos.git)のDBを参照します。
-
-
-### Docker
-
-アプリケーションとWEBサーバをDocker化しています。
-
-DBは[tos](https://github.com/feliseed/tos.git)のDockerコンテナ(db)を参照します。
-そのため事前にTOSリポジトリでdockerを起動してください。
-
-<http://localhost:8000>でアクセスできます。
-
-.envは以下の項目を以下の通り設定してください。
-
 ```text
 APP_URL=http://localhost:8000
 

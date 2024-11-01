@@ -15,42 +15,32 @@ RUN apt-get update && apt-get install -y \
 # Configure PHP extensions
 RUN docker-php-ext-configure gd --with-jpeg
 
+# Install Xdebug
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/
+RUN pecl install xdebug && \
+    docker-php-ext-enable xdebug
+
 # Install PHP extensions
-# Pre-installed extensions of php:8.1-cli are below.
-# Core
-# ctype
-# curl
-# date
-# dom
-# fileinfo
-# filter
-# ftp
-# hash
-# iconv
-# json
-# libxml
-# mbstring
-# mysqlnd
-# openssl
-# pcre
-# PDO
-# pdo_sqlite
-# Phar
-# posix
-# readline
-# Reflection
-# session
-# SimpleXML
-# sodium
-# SPL
-# sqlite3
-# standard
-# tokenizer
-# xml
-# xmlreader
-# xmlwriter
-# zlib
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Install imagick extension
+# Use apt-get for Debian/Ubuntu-based images
+RUN apt-get update && \
+    apt-get install -y git build-essential libmagickwand-dev && \
+    git clone https://github.com/Imagick/imagick.git --depth 1 /tmp/imagick && \
+    cd /tmp/imagick && \
+    git fetch origin master && \
+    git switch master && \
+    phpize && \
+    ./configure && \
+    make && \
+    make install && \
+    docker-php-ext-enable imagick && \
+    apt-get remove --purge -y git && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/imagick
+
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
